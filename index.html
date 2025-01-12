@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="shortcut icon" href="./img" type="image/x-icon">
+  <link rel="shortcut icon" href="./img/cronometro.png" type="image/x-icon">
   <link rel="stylesheet" href="./styles.css">
   <title>Cronometro</title>
 </head>
@@ -16,7 +16,7 @@
     <nav>
       <ul class="lista-enlaces">
         <li>
-          <a href="" class="enlace-proyecto" target="_blank">
+          <a href="https://github.com/CarlosVicenteB/Cronometro-Basico" class="enlace-proyecto" target="_blank">
             <img class="logo-github" src="./img/github.png" alt="Logo de github">
             Proyecto en github
           </a>
@@ -24,7 +24,34 @@
       </ul>
     </nav>
   </header>
-  
+
+  <main>
+    <section class="cronometro">
+      <div>
+        <time class="reloj">00:00.000</time>
+      </div>
+
+      <div class="botones">
+        <button class="iniciar">Iniciar</button>
+        <button class="parar">Parar</button>
+        <button class="reiniciar">Reiniciar</button>
+        <button class="tiempo-intermedio">Tiempo intermedio</button>
+      </div>
+    </section>
+
+    <section class="tiempos-del-cronometro">
+      <table>
+        <thead>
+          <th>Puesto</th>
+          <th>Tiempo total</th>
+          <th>Diferencia</th>
+        </thead>
+        <tbody class="datos-tabla">
+        </tbody>
+      </table>
+    </section>
+  </main>
+
   <script src="./script.js"></script>
 </body>
 </html>
