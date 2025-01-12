@@ -1,0 +1,44 @@
+* {
+  box-sizing: border-box;
+  font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+  padding: 0;
+  margin: 0;
+}
+
+body {
+  background-image: linear-gradient(to right, #51ce89 20%, #ebe665 80%);
+}
+
+/* Header */
+
+.cabecera {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.8rem;
+  font-size: 0.65rem;
+  letter-spacing: 0.1rem;
+}
+
+.title {
+  display: block;
+}
+
+.lista-enlaces {
+  list-style: none;
+}
+
+.enlace-proyecto {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  text-decoration: none;
+  font-weight: bold;
+  color: #212121;
+}
+
+.logo-github {
+  height: 3rem;
+  width: 3rem;
+}
