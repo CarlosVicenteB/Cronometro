@@ -8,11 +8,13 @@ let registroTiempos = []
 
 // Estructura de cada registro
 /*
-    {
-        puesto:
-        tiempo:
-        diferencia:
-    }
+    [
+        {
+            puesto: 1
+            tiempo: cronometro
+        },
+        ...
+    ]
 */
 
 const estadoInicial = () => {
@@ -78,6 +80,32 @@ const renderizarTiempo = (tiempo) => { // Extraer la logica para evitar repitici
     }
 }
 
+const renderizarTabla = () => {
+    if (registroTiempos.length === 0) return
+    const datosTabla = document.querySelector('.datos-tabla')
+    datosTabla.innerHTML = ''
+
+    registroTiempos.forEach((registro) => {
+        const tr = document.createElement('tr')
+        tr.classList.add('campos-tabla-body')
+
+        const tdPuesto = document.createElement('td')
+        tdPuesto.textContent = registro.puesto
+
+        const tdTiempo = document.createElement('td')
+        tdTiempo.textContent = `
+            ${registro.tiempo.minutos < 9 ? '0' + registro.tiempo.minutos : registro.tiempo.minutos}
+            ${registro.tiempo.segundos < 9 ? '0' + registro.tiempo.segundos : registro.tiempo.segundos}
+            ${registro.tiempo.milisegundos < 9 ? '0' + registro.tiempo.milisegundos : registro.tiempo.milisegundos}
+        `
+
+        tr.appendChild(tdPuesto)
+        tr.appendChild(tdTiempo)
+
+        datosTabla.appendChild(tr)
+    })
+}
+
 const botonIniciar = document.querySelector('.iniciar')
 botonIniciar.addEventListener('click', () => {
     estadoActivado()
@@ -110,5 +138,23 @@ botonReiniciar.addEventListener('click', () => {
     sg.textContent = '00'
     const ml = document.querySelector('.milisegundos')
     ml.textContent = '00'
+
+    const datosTabla = document.querySelector('.datos-tabla')
+    datosTabla.innerHTML = ''
+    registroTiempos = []
 })
 
+const botonTiempoIntermedio = document.querySelector('.tiempo-intermedio')
+botonTiempoIntermedio.addEventListener('click', () => {
+    let orden = registroTiempos.length + 1
+    registroTiempos.push({
+        puesto: orden,
+        tiempo: {
+            minutos: cronometro.minutos,
+            segundos: cronometro.segundos,
+            milisegundos: cronometro.milisegundos
+        }
+    })
+
+    renderizarTabla()
+})
