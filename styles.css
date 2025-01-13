@@ -42,3 +42,16 @@ body {
   height: 3rem;
   width: 3rem;
 }
+
+/* MAIN */
+.parar {
+  display: none;
+}
+
+.tiempo-intermedio {
+  display: none;
+}
+
+.continuar {
+  display: none;
+}
