@@ -82,6 +82,8 @@ const renderizarTiempo = (tiempo) => { // Extraer la logica para evitar repitici
 
 const renderizarTabla = () => {
     if (registroTiempos.length === 0) return
+    const seccionTabla = document.querySelector('.tiempos-del-cronometro')
+    seccionTabla.style.display = 'block'
     const datosTabla = document.querySelector('.datos-tabla')
     datosTabla.innerHTML = ''
 
@@ -142,6 +144,9 @@ botonReiniciar.addEventListener('click', () => {
     const datosTabla = document.querySelector('.datos-tabla')
     datosTabla.innerHTML = ''
     registroTiempos = []
+
+    const seccionTabla = document.querySelector('.tiempos-del-cronometro')
+    seccionTabla.style.display = 'none'
 })
 
 const botonTiempoIntermedio = document.querySelector('.tiempo-intermedio')
