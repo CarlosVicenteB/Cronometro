@@ -1,3 +1,7 @@
+let registroTablas = JSON.parse(localStorage.getItem('registroTablas')) || []
+console.log(registroTablas)
+let maxRegistro = 3
+
 let cronometro = {
     minutos: 0,
     segundos: 0,
@@ -6,7 +10,7 @@ let cronometro = {
 let intervalo = null
 let registroTiempos = []
 
-// Estructura de cada registro
+// Estructura de registroTiempos
 /*
     [
         {
@@ -108,6 +112,13 @@ const renderizarTabla = () => {
     })
 }
 
+const renderizarHistorial = () => {
+    const seccionHistorial = document.querySelector('.tiempos-local-storage')
+    seccionHistorial.style.display = 'block'
+}
+
+if ( registroTablas.length > 0 ) renderizarHistorial()
+
 const botonIniciar = document.querySelector('.iniciar')
 botonIniciar.addEventListener('click', () => {
     estadoActivado()
@@ -162,4 +173,20 @@ botonTiempoIntermedio.addEventListener('click', () => {
     })
 
     renderizarTabla()
+})
+
+// agregar validacion de si el nombre existe,
+const botonGuardar = document.querySelector('.guardar-tabla')
+botonGuardar.addEventListener('click', (event) => {
+    const { value: nombreTabla } = document.getElementById('nombre-tabla')
+    if (nombreTabla === '') return
+    event.preventDefault()
+
+    let nuevoRegistroTabla = {
+        nombreTabla,
+        tiempos: [...registroTiempos]
+    }
+
+    registroTablas.push(nuevoRegistroTabla)
+    localStorage.setItem('registroTablas', JSON.stringify(registroTablas))
 })
