@@ -1,5 +1,4 @@
 let registroTablas = JSON.parse(localStorage.getItem('registroTablas')) || []
-console.log(registroTablas)
 let maxRegistro = 3
 
 let cronometro = {
@@ -21,6 +20,7 @@ let registroTiempos = []
     ]
 */
 
+// ESTADOS DE LOS BOTONES
 const estadoInicial = () => {
     const botonIniciar = document.querySelector('.iniciar')
     const botonReiniciar = document.querySelector('.reiniciar')
@@ -56,6 +56,7 @@ const estadoDetenido = () => {
     botonReiniciar.style.display = 'inline-block'
 }
 
+// FUNCIONES DE RENDERIZADO
 const renderizarTiempo = (tiempo) => { // Extraer la logica para evitar repiticion de codigo
     const ml = document.querySelector('.milisegundos')
     if (tiempo.milisegundos < 99) {
@@ -84,6 +85,7 @@ const renderizarTiempo = (tiempo) => { // Extraer la logica para evitar repitici
     }
 }
 
+// Manejar el renderizado de tablas independiente al ultimo registro, hacerlo reutilizable
 const renderizarTabla = () => {
     if (registroTiempos.length === 0) return
     const seccionTabla = document.querySelector('.tiempos-del-cronometro')
@@ -100,11 +102,8 @@ const renderizarTabla = () => {
 
         const tdTiempo = document.createElement('td')
         tdTiempo.textContent = `
-            ${registro.tiempo.minutos < 9 ? '0' + registro.tiempo.minutos : registro.tiempo.minutos}
-            ${registro.tiempo.segundos < 9 ? '0' + registro.tiempo.segundos : registro.tiempo.segundos}
-            ${registro.tiempo.milisegundos < 9 ? '0' + registro.tiempo.milisegundos : registro.tiempo.milisegundos}
+            ${registro.tiempo.minutos < 9 ? '0' + registro.tiempo.minutos : registro.tiempo.minutos}:${registro.tiempo.segundos < 9 ? '0' + registro.tiempo.segundos : registro.tiempo.segundos}:${registro.tiempo.milisegundos < 9 ? '0' + registro.tiempo.milisegundos : registro.tiempo.milisegundos}
         `
-
         tr.appendChild(tdPuesto)
         tr.appendChild(tdTiempo)
 
@@ -112,13 +111,34 @@ const renderizarTabla = () => {
     })
 }
 
+// Pendiente boton de eliminar registro
 const renderizarHistorial = () => {
     const seccionHistorial = document.querySelector('.tiempos-local-storage')
     seccionHistorial.style.display = 'block'
+    
+    const listaHistorial = document.querySelector('.lista-historial')
+    
+    registroTablas.forEach((tabla) => {
+        const elemento = document.createElement('li')
+        elemento.classList.toggle('elementos-historial')
+
+        const nombre = document.createElement('p')
+        const mejorTiempo = document.createElement('p')
+
+        nombre.textContent = tabla.nombreTabla
+        mejorTiempo.textContent = `Mejor tiempo: ${tabla.mejorTiempo}`
+
+        elemento.appendChild(nombre)
+        elemento.appendChild(mejorTiempo)
+
+        listaHistorial.appendChild(elemento)
+    })
+
 }
 
 if ( registroTablas.length > 0 ) renderizarHistorial()
 
+// ACCIONES DE LOS BOTONES DEL CRONOMETRO
 const botonIniciar = document.querySelector('.iniciar')
 botonIniciar.addEventListener('click', () => {
     estadoActivado()
@@ -175,18 +195,27 @@ botonTiempoIntermedio.addEventListener('click', () => {
     renderizarTabla()
 })
 
-// agregar validacion de si el nombre existe,
+// MANEJAR LOS REGISTROS DE LOS TIEMPOS
+// Llamar a una funcion de alerta cuando no tiene nombre o ya este en uso el nombre, en caso se guardo hacer algo con el boton para que no se aprete mas de una vez
+// Realizar una funcion que le de formato al tiempo
 const botonGuardar = document.querySelector('.guardar-tabla')
 botonGuardar.addEventListener('click', (event) => {
-    const { value: nombreTabla } = document.getElementById('nombre-tabla')
-    if (nombreTabla === '') return
     event.preventDefault()
 
+    const { value: nombreTabla } = document.getElementById('nombre-tabla')
+    const existeNombreTabla = registroTablas.some(tabla => tabla.nombreTabla === nombreTabla)
+    if (nombreTabla === '' || existeNombreTabla) return
+
+    const mejorTiempo = `
+            ${registroTiempos[0].tiempo.minutos < 9 ? '0' + registroTiempos[0].tiempo.minutos : registroTiempos[0].tiempo.minutos}:${registroTiempos[0].tiempo.segundos < 9 ? '0' + registroTiempos[0].tiempo.segundos : registroTiempos[0].tiempo.segundos}:${registroTiempos[0].tiempo.milisegundos < 9 ? '0' + registroTiempos[0].tiempo.milisegundos : registroTiempos[0].tiempo.milisegundos}
+        `
     let nuevoRegistroTabla = {
         nombreTabla,
+        mejorTiempo,
         tiempos: [...registroTiempos]
     }
 
     registroTablas.push(nuevoRegistroTabla)
     localStorage.setItem('registroTablas', JSON.stringify(registroTablas))
+    renderizarHistorial()
 })
