@@ -43,6 +43,26 @@ let intervalo = null
 
 // ESTADOS DE LOS BOTONES
 const estadoInicial = () => {
+    cronometro = {
+        minutos: 0,
+        segundos: 0,
+        milisegundos: 0
+    }
+
+    const mn = document.querySelector('.minutos')
+    mn.textContent = '00'
+    const sg = document.querySelector('.segundos')
+    sg.textContent = '00'
+    const ml = document.querySelector('.milisegundos')
+    ml.textContent = '00'
+
+    const datosTabla = document.querySelector('.datos-tabla')
+    datosTabla.innerHTML = ''
+    registroTiempos = []
+
+    const seccionTabla = document.querySelector('.tiempos-del-cronometro')
+    seccionTabla.style.display = 'none'
+
     const botonIniciar = document.querySelector('.iniciar')
     const botonReiniciar = document.querySelector('.reiniciar')
     const botonContinuar = document.querySelector('.continuar')
@@ -79,11 +99,10 @@ const estadoDetenido = () => {
 
 // FUNCIONES DE RENDERIZADO
 const renderizarCronometro = (cronometro) => {
-    let tiempoString = ''
     const minutos = cronometro.minutos < 10 ? `0${cronometro.minutos}` : cronometro.minutos
     const segundos = cronometro.segundos < 10 ? `0${cronometro.segundos}` : cronometro.segundos
     const milisegundos = cronometro.milisegundos < 10 ? `0${cronometro.milisegundos}` : cronometro.milisegundos
-    return tiempoString = `${minutos}:${segundos}:${milisegundos}`
+    return `${minutos}:${segundos}:${milisegundos}`
 }
 
 const renderizarTiempo = (tiempo) => {
@@ -118,6 +137,8 @@ const renderizarTiempo = (tiempo) => {
 const renderizarTabla = (registroCronometro, nombreTabla = 'Tiempos del cronometro') => {
     if (registroCronometro.length === 0) return
     
+    const formularioTabla = document.querySelector('.formulario-tabla')
+    formularioTabla.style.display = 'block'
     const seccionTabla = document.querySelector('.tiempos-del-cronometro')
     seccionTabla.style.display = 'block'
     const datosTabla = document.querySelector('.datos-tabla')
@@ -149,14 +170,25 @@ const renderizarHistorial = () => {
     const listaHistorial = document.querySelector('.lista-historial')
     listaHistorial.innerHTML = ''
     
-    registroTablas.forEach((tabla) => {
+    registroTablas.forEach((tabla, indice) => {
         const elemento = document.createElement('li')
         elemento.classList.toggle('elementos-historial')
 
         const nombre = document.createElement('p')
+        nombre.classList.toggle('elemento-nombre')
         const mejorTiempo = document.createElement('p')
+        mejorTiempo.classList.toggle('elemento-mejor-tiempo')
         const vertabla = document.createElement('button')
+        vertabla.classList.toggle('elemento-ver')
         const eliminarTabla = document.createElement('button')
+        eliminarTabla.classList.toggle('elemento-eliminar')
+
+        vertabla.addEventListener('click', () => {
+            verTabla(tabla)
+        })
+        eliminarTabla.addEventListener('click', () => {
+            eliminarTabla(indice)
+        })
 
         nombre.textContent = tabla.nombreTabla
         mejorTiempo.textContent = `Mejor tiempo: ${tabla.mejorTiempo}`
@@ -197,25 +229,18 @@ botonContinuar.addEventListener('click', () => {
 const botonReiniciar = document.querySelector('.reiniciar')
 botonReiniciar.addEventListener('click', () => {
     estadoInicial()
-    cronometro = {
-        minutos: 0,
-        segundos: 0,
-        milisegundos: 0
-    }
-    const mn = document.querySelector('.minutos')
-    mn.textContent = '00'
-    const sg = document.querySelector('.segundos')
-    sg.textContent = '00'
-    const ml = document.querySelector('.milisegundos')
-    ml.textContent = '00'
-
-    const datosTabla = document.querySelector('.datos-tabla')
-    datosTabla.innerHTML = ''
-    registroTiempos = []
-
-    const seccionTabla = document.querySelector('.tiempos-del-cronometro')
-    seccionTabla.style.display = 'none'
 })
+
+// ACCIONES VER Y ELIMINAR TABLAS
+function verTabla (tabla) {
+    renderizarTabla(tabla.tiempos, tabla.nombreTabla)
+    const formularioTabla = document.querySelector('.formulario-tabla')
+    formularioTabla.style.display = 'none'
+}
+
+function eliminarTabla (indice) {
+    //
+}
 
 const botonTiempoIntermedio = document.querySelector('.tiempo-intermedio')
 botonTiempoIntermedio.addEventListener('click', () => {
