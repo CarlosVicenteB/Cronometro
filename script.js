@@ -165,6 +165,12 @@ const renderizarTabla = (registroCronometro, nombreTabla = 'Tiempos del cronomet
 // Se muestra en dos ocasiones, si hay registros en el localStorage o si se guarda un nuevo registro.
 const renderizarHistorial = () => {
     const seccionHistorial = document.querySelector('.tiempos-local-storage')
+
+    if ( registroTablas.length === 0 ) {
+        seccionHistorial.style.display = 'none'
+        return
+    }
+
     seccionHistorial.style.display = 'block'
     
     const listaHistorial = document.querySelector('.lista-historial')
@@ -184,10 +190,10 @@ const renderizarHistorial = () => {
         eliminarTabla.classList.toggle('elemento-eliminar')
 
         vertabla.addEventListener('click', () => {
-            verTabla(tabla)
+            mostrarTabla(tabla)
         })
         eliminarTabla.addEventListener('click', () => {
-            eliminarTabla(indice)
+            borrarTabla(indice)
         })
 
         nombre.textContent = tabla.nombreTabla
@@ -232,14 +238,19 @@ botonReiniciar.addEventListener('click', () => {
 })
 
 // ACCIONES VER Y ELIMINAR TABLAS
-function verTabla (tabla) {
+function mostrarTabla (tabla) {
     renderizarTabla(tabla.tiempos, tabla.nombreTabla)
     const formularioTabla = document.querySelector('.formulario-tabla')
     formularioTabla.style.display = 'none'
 }
 
-function eliminarTabla (indice) {
-    //
+function borrarTabla (indice) {
+    const nuevoRegistroTablas = registroTablas.filter((_, i) => i !== indice)
+    console.log(nuevoRegistroTablas)
+    localStorage.removeItem('registroTablas')
+    localStorage.setItem('registroTablas', JSON.stringify(nuevoRegistroTablas))
+    registroTablas = JSON.parse(localStorage.getItem('registroTablas')) || []
+    renderizarHistorial()
 }
 
 const botonTiempoIntermedio = document.querySelector('.tiempo-intermedio')
