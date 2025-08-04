@@ -4,6 +4,7 @@ let cronometro = {
     segundos: 0,
     milisegundos: 0
 }
+let nombreTabla = 'Tiempos del cronometro'
 let registroTiempos = []
 let intervalo = null
 
@@ -95,9 +96,14 @@ const estadoDetenido = () => {
     botonTiempoIntermedio.style.display = 'none'
     botonContinuar.style.display = 'inline-block'
     botonReiniciar.style.display = 'inline-block'
+
+    // Mostrar opcion de guardar tiempos
+    const formularioGuardarTiempos = document.querySelector('.formulario-tabla')
+    formularioGuardarTiempos.style.display = 'block'
 }
 
 // FUNCIONES DE RENDERIZADO
+// Se renderiza con el tiempo especificado en la variable de cronometro
 const renderizarCronometro = (cronometro) => {
     const minutos = cronometro.minutos < 10 ? `0${cronometro.minutos}` : cronometro.minutos
     const segundos = cronometro.segundos < 10 ? `0${cronometro.segundos}` : cronometro.segundos
@@ -105,6 +111,7 @@ const renderizarCronometro = (cronometro) => {
     return `${minutos}:${segundos}:${milisegundos}`
 }
 
+// Renderiza y actualiza el tiempo del cronometro en tiempo real
 const renderizarTiempo = (tiempo) => {
     const ml = document.querySelector('.milisegundos')
     if (tiempo.milisegundos < 99) {
@@ -133,18 +140,19 @@ const renderizarTiempo = (tiempo) => {
     }
 }
 
-// Se renderiza a medida que se presione el boton tiempoIntermedio o que se ponga ver a uno de los registros de tablas
-const renderizarTabla = (registroCronometro, nombreTabla = 'Tiempos del cronometro') => {
+/* Renderiza los puestos y tiempos de una tabla respecto a un registro de tiempos, es llamada por:
+    - mostrarTabla
+    - botonTiempoIntermedio
+*/
+const renderizarTabla = (registroCronometro, nombreTabla) => {
     if (registroCronometro.length === 0) return
     
-    const formularioTabla = document.querySelector('.formulario-tabla')
-    formularioTabla.style.display = 'block'
     const seccionTabla = document.querySelector('.tiempos-del-cronometro')
     seccionTabla.style.display = 'block'
-    const datosTabla = document.querySelector('.datos-tabla')
-    datosTabla.innerHTML = ''
     const h2Tabla = document.querySelector('.titulo-tabla')
     h2Tabla.textContent = nombreTabla
+    const datosTabla = document.querySelector('.datos-tabla')
+    datosTabla.innerHTML = ''
 
     registroCronometro.forEach((registro) => {
         const tr = document.createElement('tr')
@@ -178,16 +186,16 @@ const renderizarHistorial = () => {
     
     registroTablas.forEach((tabla, indice) => {
         const elemento = document.createElement('li')
-        elemento.classList.toggle('elementos-historial')
+        elemento.classList.add('elementos-historial')
 
         const nombre = document.createElement('p')
-        nombre.classList.toggle('elemento-nombre')
+        nombre.classList.add('elemento-nombre')
         const mejorTiempo = document.createElement('p')
-        mejorTiempo.classList.toggle('elemento-mejor-tiempo')
+        mejorTiempo.classList.add('elemento-mejor-tiempo')
         const vertabla = document.createElement('button')
-        vertabla.classList.toggle('elemento-ver')
+        vertabla.classList.add('elemento-ver')
         const eliminarTabla = document.createElement('button')
-        eliminarTabla.classList.toggle('elemento-eliminar')
+        eliminarTabla.classList.add('elemento-eliminar')
 
         vertabla.addEventListener('click', () => {
             mostrarTabla(tabla)
@@ -217,6 +225,7 @@ if ( registroTablas.length > 0 ) renderizarHistorial()
 const botonIniciar = document.querySelector('.iniciar')
 botonIniciar.addEventListener('click', () => {
     estadoActivado()
+    // alerta('Se desactivo brevemente las acciones del historial', 'informativo')
     intervalo = setInterval(() => renderizarTiempo(cronometro), 1000 / 100)
 })
 
@@ -237,22 +246,6 @@ botonReiniciar.addEventListener('click', () => {
     estadoInicial()
 })
 
-// ACCIONES VER Y ELIMINAR TABLAS
-function mostrarTabla (tabla) {
-    renderizarTabla(tabla.tiempos, tabla.nombreTabla)
-    const formularioTabla = document.querySelector('.formulario-tabla')
-    formularioTabla.style.display = 'none'
-}
-
-function borrarTabla (indice) {
-    const nuevoRegistroTablas = registroTablas.filter((_, i) => i !== indice)
-    console.log(nuevoRegistroTablas)
-    localStorage.removeItem('registroTablas')
-    localStorage.setItem('registroTablas', JSON.stringify(nuevoRegistroTablas))
-    registroTablas = JSON.parse(localStorage.getItem('registroTablas')) || []
-    renderizarHistorial()
-}
-
 const botonTiempoIntermedio = document.querySelector('.tiempo-intermedio')
 botonTiempoIntermedio.addEventListener('click', () => {
     let orden = registroTiempos.length + 1
@@ -265,28 +258,79 @@ botonTiempoIntermedio.addEventListener('click', () => {
         }
     })
 
-    renderizarTabla(registroTiempos)
+    renderizarTabla(registroTiempos, nombreTabla)
 })
 
-// MANEJAR LOS REGISTROS DE LOS TIEMPOS
-// Llamar a una funcion de alerta cuando no tiene nombre o ya este en uso el nombre, en caso se guardo hacer algo con el boton para que no se aprete mas de una vez
+// ACCIONES VER Y ELIMINAR TABLAS
+function mostrarTabla (tabla) {
+    renderizarTabla(tabla.tiempos, tabla.nombreTabla)
+    const formularioTabla = document.querySelector('.formulario-tabla')
+    formularioTabla.style.display = 'none'
+}
+
+function borrarTabla (indice) {
+    const nuevoRegistroTablas = registroTablas.filter((_, i) => i !== indice)
+    localStorage.removeItem('registroTablas')
+    localStorage.setItem('registroTablas', JSON.stringify(nuevoRegistroTablas))
+    registroTablas = JSON.parse(localStorage.getItem('registroTablas')) || []
+    renderizarHistorial()
+}
+
+// GUARDAR TABLA
+// Llamar a una funcion de alerta cuando no tiene nombre o ya este en uso el nombre
+// alerta -> termine de guardar el ultimo registro de tiempos o pare el mismo para ver los datos de su historial
 const botonGuardar = document.querySelector('.guardar-tabla')
 botonGuardar.addEventListener('click', (event) => {
     event.preventDefault()
 
-    const { value: nombreTabla } = document.getElementById('nombre-tabla')
+    const { value: nombreT } = document.getElementById('nombre-tabla')
     const existeNombreTabla = registroTablas.some(tabla => tabla.nombreTabla === nombreTabla)
-    if (nombreTabla === '' || existeNombreTabla) return
+    if (nombreT === '') {
+        alerta('Asigne un nombre a la tabla', 'incorrecto')
+        return
+    }
+    if (existeNombreTabla) {
+        alerta('Este nombre esta en uso', 'incorrecto')
+        return
+    }
 
     const mejorTiempo = renderizarCronometro(registroTiempos[0].tiempo)
     let nuevoRegistroTabla = {
-        nombreTabla,
+        nombreTabla: nombreT,
         mejorTiempo,
-        tiempos: [...registroTiempos]
+        tiempos: registroTiempos
     }
 
     registroTablas.push(nuevoRegistroTabla)
     localStorage.setItem('registroTablas', JSON.stringify(registroTablas))
-    renderizarTabla(registroTiempos, nombreTabla)
+    renderizarTabla(registroTiempos, nombreT)
+
     renderizarHistorial()
+    estadoInicial()
+    alerta('El registro se guardo correctamente', 'correcto')
 })
+
+// Alerta y Retroalimentación de las acciones
+/* 
+    Estados:
+    - informativo
+    - correcto
+    - incorrecto
+*/
+const alerta = (mensaje, estado = 'informativo') => {
+    const contenedor = document.querySelector('.contenedor-alerta');
+    const mensajeElemento = contenedor.querySelector('.mensaje-alerta');
+
+    mensajeElemento.className = 'mensaje-alerta';
+
+    mensajeElemento.classList.add(`alerta-${estado}`);
+    mensajeElemento.textContent = mensaje;
+
+    contenedor.style.display = 'block';
+
+    setTimeout(() => {
+        contenedor.style.display = 'none';
+        mensajeElemento.textContent = '';
+        mensajeElemento.className = 'mensaje-alerta';
+    }, 2000);
+};
