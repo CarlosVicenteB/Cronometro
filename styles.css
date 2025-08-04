@@ -43,15 +43,14 @@ body {
   width: 3rem;
 }
 
-/* MAIN */
-.parar {
-  display: none;
-}
-
-.tiempo-intermedio {
-  display: none;
-}
-
-.continuar {
+/* DISPLAY NONE INICIAL */
+.parar,
+.tiempo-intermedio,
+.continuar,
+.tiempos-del-cronometro,
+.formulario-tabla,
+.tiempos-local-storage,
+.contenedor-alerta
+{
   display: none;
 }
