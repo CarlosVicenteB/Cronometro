@@ -63,6 +63,8 @@ const estadoInicial = () => {
 
     const seccionTabla = document.querySelector('.tiempos-del-cronometro')
     seccionTabla.style.display = 'none'
+    const formularioGuardarTiempos = document.querySelector('.formulario-tabla')
+    formularioGuardarTiempos.style.display = 'none'
 
     const botonIniciar = document.querySelector('.iniciar')
     const botonReiniciar = document.querySelector('.reiniciar')
@@ -85,6 +87,7 @@ const estadoActivado = () => {
     botonContinuar.style.display = 'none'
     botonParar.style.display = 'inline-block'
     botonTiempoIntermedio.style.display = 'inline-block'
+    renderizarTabla(registroTiempos, nombreTabla)
 }
 
 const estadoDetenido = () => {
@@ -192,10 +195,18 @@ const renderizarHistorial = () => {
         nombre.classList.add('elemento-nombre')
         const mejorTiempo = document.createElement('p')
         mejorTiempo.classList.add('elemento-mejor-tiempo')
+        const contenedorBotones = document.createElement('div')
+        contenedorBotones.classList.add('historial-botones')
+
+        // Acciones del historial
         const vertabla = document.createElement('button')
         vertabla.classList.add('elemento-ver')
         const eliminarTabla = document.createElement('button')
         eliminarTabla.classList.add('elemento-eliminar')
+        vertabla.textContent = 'Ver'
+        eliminarTabla.textContent = 'Borrar'
+        contenedorBotones.appendChild(vertabla)
+        contenedorBotones.appendChild(eliminarTabla)
 
         vertabla.addEventListener('click', () => {
             mostrarTabla(tabla)
@@ -206,13 +217,10 @@ const renderizarHistorial = () => {
 
         nombre.textContent = tabla.nombreTabla
         mejorTiempo.textContent = `Mejor tiempo: ${tabla.mejorTiempo}`
-        vertabla.textContent = 'Ver'
-        eliminarTabla.textContent = 'Delete'
 
         elemento.appendChild(nombre)
         elemento.appendChild(mejorTiempo)
-        elemento.appendChild(vertabla)
-        elemento.appendChild(eliminarTabla)
+        elemento.appendChild(contenedorBotones)
 
         listaHistorial.appendChild(elemento)
     })
@@ -277,11 +285,14 @@ function borrarTabla (indice) {
 }
 
 // GUARDAR TABLA
-// Llamar a una funcion de alerta cuando no tiene nombre o ya este en uso el nombre
-// alerta -> termine de guardar el ultimo registro de tiempos o pare el mismo para ver los datos de su historial
 const botonGuardar = document.querySelector('.guardar-tabla')
 botonGuardar.addEventListener('click', (event) => {
     event.preventDefault()
+
+    if (registroTiempos.length == 0) {
+        alerta('No se encontro datos para guardar', 'incorrecto')
+        return
+    }
 
     const { value: nombreT } = document.getElementById('nombre-tabla')
     const existeNombreTabla = registroTablas.some(tabla => tabla.nombreTabla === nombreTabla)
@@ -306,8 +317,9 @@ botonGuardar.addEventListener('click', (event) => {
     renderizarTabla(registroTiempos, nombreT)
 
     renderizarHistorial()
-    estadoInicial()
+    estadoInicial(1)
     alerta('El registro se guardo correctamente', 'correcto')
+    document.getElementById('nombre-tabla').value = ''
 })
 
 // Alerta y Retroalimentación de las acciones
