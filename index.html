@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link rel="shortcut icon" href="./img/cronometro.png" type="image/x-icon">
   <link rel="stylesheet" href="./styles.css">
+  <link href="https://fonts.cdnfonts.com/css/ds-digital" rel="stylesheet">
   <title>Cronometro</title>
 </head>
 <body>
@@ -27,7 +28,7 @@
 
   <main class="contenedor-principal">
     <section class="cronometro">
-      <div>
+      <div class="contenedor-reloj">
         <time class="reloj">
           <span class="minutos">00</span>
           <span>:</span>
@@ -37,19 +38,28 @@
         </time>
       </div>
 
-      <div class="botones">
+      <div class="reloj-botones">
         <button class="iniciar">Iniciar</button>
         <button class="parar">Parar</button>
         <button class="continuar">Continuar</button>
         <button class="reiniciar">Reiniciar</button>
         <button class="tiempo-intermedio">Tiempo intermedio</button>
       </div>
+
+      <form class="formulario-tabla">
+        <p class="formulario-mensaje">Guarde al final de registrar todos los tiempos</p>
+        <div class="contenedor-input">
+          <input type="text" id="nombre-tabla" required class="formulario-input">
+          <label for="nombre-tabla" class="formulario-label">Nombre</label>
+          <button type="submit" class="guardar-tabla formulario-button">+</button>
+        </div>
+      </form>
     </section>
 
     <section class="tiempos-del-cronometro">
       <h2 class="titulo-tabla">Tiempos del cronometro</h2>
-      <table>
-        <thead>
+      <table class="tabla-tiempos">
+        <thead class="cabezera-tabla">
           <tr>
             <th>Puesto</th>
             <th>Tiempo total</th>
@@ -58,14 +68,6 @@
         <tbody class="datos-tabla">
         </tbody>
       </table>
-      <form class="formulario-tabla">
-        <p>Guarde al final de registrar todos los tiempos</p>
-        <div>
-          <label for="nombre-tabla">Nombre</label>
-          <input type="text" id="nombre-tabla" required>
-        </div>
-        <button type="submit" class="guardar-tabla">sticker de flechita a la derecha</button>
-      </form>
     </section>
 
     <section class="tiempos-local-storage">
@@ -74,10 +76,10 @@
       </ul>
     </section>
 
-    <div class="contenedor-alerta">
-      <p class="mensaje-alerta"></p>
-    </div>
   </main>
+  <div class="contenedor-alerta">
+    <p class="mensaje-alerta"></p>
+  </div>
 
   <script src="./script.js"></script>
 </body>
